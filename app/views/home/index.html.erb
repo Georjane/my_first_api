@@ -1,0 +1,19 @@
+<h2>Search for a Flickr User's Photos</h2> 
+
+<%= form_with url: '/', method: 'get', local: true do |f| %>
+  <%= f.label :user_id, "User ID" %>  
+  <%= f.text_field :user_id %>
+  <%= f.submit "Search"%>
+<% end %>
+
+<br>
+
+<% if @profile %>
+  <%= link_to "Link to #{@profile.first_name} #{@profile.last_name}'s Page",
+   "https://www.flickr.com/people/#{@profile.id}" %> <br>
+<% end %>
+  <% if @photos %>
+    <% @photos.each do |photo| %>
+      <img src= <%= Flickr.url(photo) %> width="50%">
+  <% end %>
+<% end %>
