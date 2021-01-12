@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <img src="#" />
+  <button id="btn1">Click</button>
+  <input type="text">
+  <button type="submit" id="btn2">okay</button>
+  <p></p>
+  <script>
+    const btn1 = document.querySelector('button#btn1');
+    const btn2 = document.querySelector('button#btn2');
+    const p = document.querySelector('p');
+    const input = document.querySelector('input');
+       
+
+    btn2.addEventListener("click",function(e){
+      e.preventDefault()
+      let val = input.value
+      val !== '' ? val : console.log('error')
+
+      let url = 'http://api.openweathermap.org/data/2.5/weather?q=' + val + '&appid=9e451d75ffc63a816314ca34a0f0ff4e';
+      fetch(url, {mode: 'cors'})
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(response) {
+          console.log(response.name);
+          console.log(response.sys.country);
+          const para = document.createElement('p')
+          para.innerHTML = response.name + ', ' + response.sys.country;
+          p.appendChild(para);
+        })
+    });
+
+
+    btn1.addEventListener('click', func());
+    function func() {
+      fetch('http://api.openweathermap.org/data/2.5/weather?q=Yaounde&appid=9e451d75ffc63a816314ca34a0f0ff4e', {mode: 'cors'})
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(response) {
+        console.log(response.name);
+        console.log(response.sys.country);
+        p.innerHTML = response.name + ', ' + response.sys.country;
+      })
+    }
+
+    const img = document.querySelector('img');
+    fetch('https://api.giphy.com/v1/gifs/translate?api_key=Hzi6qiaANi6DE3tcz1LHdU2LLBjdGRP2&s=cats', {mode: 'cors'})
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(response) {
+        img.src = response.data.images.original.url;
+      })
+  </script>
+  
+</body>
+</html>
