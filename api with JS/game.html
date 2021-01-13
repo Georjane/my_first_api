@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Document</title>
+</head>
+<body>
+  <div id="mydiv">
+    <label for="game">Game Title:</label>
+    <input type="text" id="game"></br>
+  </div>
+  
+  <div>
+    <label for="name">Player name:</label>
+    <input type="text" id="name"></br>
+    <label for="score">Score:</label>
+    <input type="number" id="score"></br>
+  </div>
+  <button type="submit">Create a Game</button>
+  <div id="scorediv">
+  </div>
+
+  <script>
+    const btn = document.querySelector('button');
+    const input = document.querySelector('input#game');
+    const name = document.querySelector('input#name');
+    const score = document.querySelector('input#score');
+    const div = document.querySelector('div#scorediv');
+    
+
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      CreateGame();
+    })
+
+    async function CreateGame() {
+      const nameGame = await fetch('https://us-central1-js-capstone-backend.cloudfunctions.net/api/games', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: input.value
+        }),
+        headers: { 
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      });
+      const gameResults = await nameGame.json();
+      const gameId = await gameResults.result;
+      addScores(gameId);      
+      input.value = '';
+      const mydiv = document.querySelector('div#mydiv');
+      mydiv.classList.toggle('hide');
+    };
+
+      async function addScores(x) {
+        let id = x.slice(14, 35);
+        let url = 'https://us-central1-js-capstone-backend.cloudfunctions.net/api/games/' + id + '/scores'
+        const createScore = await fetch(url, {
+          method: "POST",
+          body: JSON.stringify({ 
+            user: name.value,
+            score: score.value
+          }),
+          headers: { 
+              "Content-type": "application/json; charset=UTF-8"
+          }
+        });
+        const scoreA = await createScore.json();
+        const scoreB = await fetch(url);
+        const resp = await scoreB.json();
+        const newresult = await resp;
+        let arr = newresult.result;
+        arr.forEach(element => {
+          const paras = document.createElement('p');
+          paras.innerHTML = element.user + '\'s score is ' + element.score;
+          div.appendChild(paras);
+        });       
+      }
+  </script>
+</body>
+</html>
